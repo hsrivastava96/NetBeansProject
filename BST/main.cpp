@@ -22,10 +22,11 @@ void create()
         }
         else
         {
+            int k=0;
             p=root;
             cout<<"Enter value to be inserted --> ";
             cin>>value;
-            while(1)
+            while(k==0)
             {
                 if(value<p->data)
                 {
@@ -37,12 +38,12 @@ void create()
                         p->left=NULL;
                         p->right=NULL;
                         cout<<"Value entered in left\n";
-                        break;
+                        k=1;
                     }
-                    else if(p->left!=NULL)
+                    else //if(p->left!=NULL)
                         p=p->left;   
                 }
-                else if(value>p->data)
+                else //if(value>p->data)
                 {
                     if(p->right==NULL)
                     {
@@ -53,7 +54,7 @@ void create()
                         p->right=NULL;
                         break;
                     }
-                    else if(p->right!=NULL)
+                    else //if(p->right!=NULL)
                         p=p->right;
                 }
             }
@@ -99,6 +100,16 @@ node * search(node *temp, int key)
         return search(temp->right,key);
     return search(temp->left,key);
 }
+node * mirror(node *p)
+{
+    if(p==NULL)
+        return p;
+    node *mrr=new node;
+    mrr->data=p->data;
+    mrr->left=mirror(p->right);
+    mrr->right=mirror(p->left);
+    return mrr;
+}
 void del(int key)
 {
     node *temp, *t;
@@ -125,9 +136,68 @@ void del(int key)
             cout<<"CANNOT BE DELETED\n";
     }
 }
+struct Q
+{
+    node *data;
+    struct Q *next;
+};
+typedef struct Q nod;
+class Queue
+{
+public:
+    nod *top, *temp;
+    Queue()
+    {
+        top=NULL;
+    }
+    int isempty()
+    {
+        if(top==NULL)
+            return 1;
+        return 0;
+    }
+    void enqueue(node *vertex)
+    {
+        nod *newnode;
+        newnode=new nod;
+        newnode->data=vertex;
+        if(top==NULL)
+            top=newnode;
+        else
+            temp->next=newnode;
+        temp=newnode;
+    }
+    void dequeue()
+    {
+        nod *tmp;
+        tmp=top;
+        top=top->next;
+        delete tmp;
+    }
+    node * gettop()
+    {
+        return top->data;
+    }
+}ob;
+void level(node *rt)
+{
+    if(rt->left==NULL&&rt->right==NULL)
+        return;
+    else
+    {
+        if(rt->left!=NULL)
+            ob.enqueue(rt->left);
+        if(rt->right!=NULL)
+            ob.enqueue(rt->right);
+        rt=ob.gettop();
+        cout<<rt->data;
+        ob.dequeue();
+        level(rt);
+    }
+}
 int main()
 {
-    node *r;
+    node *r, *mir;
     r=NULL;
     create();
     cout<<"\nIN\n";
@@ -140,8 +210,18 @@ int main()
     if(r!=NULL)
         cout<<r->data;
     else
-        cout<<"not present";*/
+        cout<<"not present";
     del(2);
-    preorder(root);
+    inorder(root);
+    mir=mirror(root);
+    cout<<"\nMirror\n";
+    inorder(mir);*/
+    cout<<"\n"<<root->data;
+    level(root);
+    while(ob.isempty()!=1)
+    {
+        cout<<ob.gettop()->data;
+        ob.dequeue();
+    }
     return 0;
 }
