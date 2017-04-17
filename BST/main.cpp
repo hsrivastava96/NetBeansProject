@@ -110,31 +110,47 @@ node * mirror(node *p)
     mrr->right=mirror(p->left);
     return mrr;
 }
-void del(int key)
+node * del(node *t, int key)
 {
-    node *temp, *t;
-    temp=search(root,key);
-    if(temp==NULL)
-        cout<<"Key not found\n";
-    else
+    node *temp;
+    if(t==NULL)
+        cout<<"Element not found\n";
+    if(key<t->data)
     {
-        if(temp->left==NULL&&temp->right==NULL)
-            delete temp;
-        else if(temp->left==NULL&&temp->right!=NULL)
-        {
-            t=temp;
-            temp=temp->right;
-            delete t;
-        }
-        else if(temp->left!=NULL&&temp->right==NULL)
-        {
-            t=temp;
-            temp=temp->left;
-            delete t;
-        }
-        else
-            cout<<"CANNOT BE DELETED\n";
+        t->left=del(t->left,key);
+        return(t);
     }
+    if(key>t->data)
+    {
+        t->right=del(t->right,key);
+        return(t);
+    }
+    if(t->left==NULL&&t->right==NULL)
+    {
+        temp=t;
+        delete temp;
+        return NULL;
+    }
+    if(t->left==NULL)
+    {
+        temp=t;
+        t=t->right;
+        delete temp;
+        return t;
+    }
+    if(t->right==NULL)
+    {
+        temp=t;
+        t=t->left;
+        delete temp;
+        return t;
+    }
+    temp=t->right;
+    while(temp->left!=NULL)
+        temp=temp->left;
+    t->data=temp->data;
+    t->right=del(t->right,t->data);
+    return t;
 }
 struct Q
 {
@@ -179,7 +195,7 @@ public:
         return top->data;
     }
 }ob;
-void level(node *rt)
+void level(node *rt)    //Level wise display module here we enque data level wise
 {
     if(rt->left==NULL&&rt->right==NULL)
         return;
@@ -216,12 +232,12 @@ int main()
     mir=mirror(root);
     cout<<"\nMirror\n";
     inorder(mir);*/
-    cout<<"\n"<<root->data;
+    cout<<"\n"<<root->data; //From here Levelwise display starts
     level(root);
     while(ob.isempty()!=1)
     {
         cout<<ob.gettop()->data;
         ob.dequeue();
-    }
+    }       //Here levelwise display ends
     return 0;
 }
